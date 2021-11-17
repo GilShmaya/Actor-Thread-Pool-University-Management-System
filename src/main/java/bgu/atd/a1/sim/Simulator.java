@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package bgu.atd.a1.sim;
+import java.io.IOException;
 import java.util.HashMap;
 
 import bgu.atd.a1.ActorThreadPool;
@@ -31,8 +32,7 @@ public class Simulator {
 	* @param myActorThreadPool - the ActorThreadPool which will be used by the simulator
 	*/
 	public static void attachActorThreadPool(ActorThreadPool myActorThreadPool){
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		actorThreadPool = myActorThreadPool;
 	}
 	
 	/**
@@ -46,7 +46,15 @@ public class Simulator {
 	
 	
 	public static int main(String [] args){
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+
+		Input input = new Input();
+		try{
+			input = JsonInputReader.getInputFromJson(args[0]);
+		}catch (IOException e){}
+
+		attachActorThreadPool(new ActorThreadPool(input.getThread()));
+
+		start();
+		return 1;
 	}
 }

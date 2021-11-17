@@ -8,7 +8,7 @@ public class Computer {
 	String computerType;
 	long failSig;
 	long successSig;
-	
+
 	public Computer(String computerType) {
 		this.computerType = computerType;
 	}
@@ -22,7 +22,11 @@ public class Computer {
 	 * @return a signature if couersesGrades grades meet the conditions
 	 */
 	public long checkAndSign(List<String> courses, Map<String, Integer> coursesGrades){
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		int passGrade = 56;
+		boolean isPass = courses.stream().allMatch(course -> coursesGrades.get(course) >= passGrade);
+		if(isPass)
+			return successSig;
+		else
+			return failSig;
 	}
 }
