@@ -19,8 +19,8 @@ public class StudentPrivateState extends PrivateState{
 	 * this may cause automatic tests to fail..
 	 */
 	public StudentPrivateState() {
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		this.grades = new HashMap<>();
+		this.signature = -1;
 	}
 
 	public HashMap<String, Integer> getGrades() {
@@ -29,5 +29,9 @@ public class StudentPrivateState extends PrivateState{
 
 	public long getSignature() {
 		return signature;
+	}
+
+	public void setSignature(long signature) {
+		this.signature = signature;
 	}
 }

@@ -1,5 +1,6 @@
 package bgu.atd.a1.sim.privateStates;
 
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -21,7 +22,10 @@ public class CoursePrivateState extends PrivateState{
 	 * this may cause automatic tests to fail..
 	 */
 	public CoursePrivateState() {
-
+		this.availableSpots = -1;
+		this.registered = 0;
+		this.regStudents = new LinkedList<>();
+		this.prequisites = new LinkedList<>();
 	}
 
 	public Integer getAvailableSpots() {
@@ -38,5 +42,25 @@ public class CoursePrivateState extends PrivateState{
 
 	public List<String> getPrequisites() {
 		return prequisites;
+	}
+
+	public void setAvailableSpots(Integer availableSpots) {
+		this.availableSpots = availableSpots;
+	}
+
+	public void registerStudent(String studentId){
+		availableSpots--;
+		registered++;
+		getRegStudents().add(studentId);
+	}
+
+	public void unregisterAvailableSpots(String studentId){
+		availableSpots++;
+		registered--;
+		getRegStudents().remove(studentId);
+	}
+
+	public void setRegistered(Integer registered) {
+		this.registered = registered;
 	}
 }

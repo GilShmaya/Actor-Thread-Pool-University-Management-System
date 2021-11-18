@@ -17,18 +17,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class Action<R> {
 
-    private ActorThreadPool pool;
+    protected ActorThreadPool pool;
     private String actorName;
-    private PrivateState actorState;
+    protected PrivateState actorState;
     private String actionName;
-    private Promise<R> promiseResult;
+    private Promise<R> promiseResult = new Promise<>();
 
 
     /**
      * start handling the action - note that this method is protected, a thread
      * cannot call it directly.
      */
-    protected abstract void start();
+    protected abstract void start() throws IllegalAccessException;
 
 
     /**
