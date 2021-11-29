@@ -2,12 +2,13 @@ package bgu.atd.a1.sim.actions;
 
 import bgu.atd.a1.Action;
 import bgu.atd.a1.sim.privateStates.CoursePrivateState;
+import javafx.util.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CloseACourseAction extends Action<String> {
+public class CloseACourseAction extends Action<Pair<Boolean, String>> {
     private final String departmentName;
     private final String courseName;
 
@@ -24,7 +25,7 @@ public class CloseACourseAction extends Action<String> {
         CoursePrivateState courseActorState = (CoursePrivateState) actorState;
 
         if (courseActorState.getAvailableSpots() == -1)
-            complete("The course is already closed");
+            complete(new Pair<>(false, "The course is already closed"));
 
         List<UnregisterAction> actionsDependency1 =
                 courseActorState.getRegStudents()
@@ -38,18 +39,18 @@ public class CloseACourseAction extends Action<String> {
         actionsDependency2.add(removeCourseFromDepartmentAction);
 
         then(actionsDependency1, () -> {
-            if (actionsDependency1.stream().allMatch(action -> Boolean.parseBoolean(action.getResult().get()))) {
+            if (actionsDependency1.stream().allMatch(action -> action.getResult().get().getKey())) {
                 courseActorState.setAvailableSpots(-1);
                 then(actionsDependency2, () -> {
                     if (actionsDependency2.get(0).getResult().get())
-                        complete("The course " + courseName + " removed successfully");
+                        complete(new Pair<>(true, "The course " + courseName + " removed successfully"));
                     else {
-                        complete("Failed to close the course " + courseName + ".");
+                        complete(new Pair<>(false, "Failed to close the course " + courseName + "."));
                     }
                 });
                 sendMessage(removeCourseFromDepartmentAction, departmentName, pool.getPrivateState(departmentName));
             } else {
-                complete("Failed to close the course " + courseName + ".");
+                complete(new Pair<>(false, "Failed to close the course " + courseName + "."));
             }
         });
         actionsDependency1

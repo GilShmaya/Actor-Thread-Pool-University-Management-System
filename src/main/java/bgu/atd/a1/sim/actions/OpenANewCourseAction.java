@@ -3,11 +3,12 @@ package bgu.atd.a1.sim.actions;
 import bgu.atd.a1.Action;
 import bgu.atd.a1.sim.privateStates.CoursePrivateState;
 import bgu.atd.a1.sim.privateStates.DepartmentPrivateState;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenANewCourseAction extends Action<String> {
+public class OpenANewCourseAction extends Action<Pair<Boolean, String>> {
     private final String departmentName;
     private final String courseName;
     private final int space;
@@ -32,10 +33,10 @@ public class OpenANewCourseAction extends Action<String> {
                     Boolean confirmationResult = actionsDependency.get(0).getResult().get();
                     if (confirmationResult) {
                         ((DepartmentPrivateState) actorState).getCourseList().add(courseName);
-                        complete("The new course " + courseName + " opened successfully");
+                        complete(new Pair<>(true, "The new course " + courseName + " opened successfully"));
                     }
                     else
-                        complete("Failed to open the new course " + courseName + ". The course id already opened");
+                        complete(new Pair<>(false, "Failed to open the new course " + courseName + ". The course id already opened"));
                 }
         );
         sendMessage(setCourseDetailsAction, courseName, new CoursePrivateState());

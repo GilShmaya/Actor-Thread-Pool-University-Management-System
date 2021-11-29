@@ -5,11 +5,12 @@ import bgu.atd.a1.PrivateState;
 import bgu.atd.a1.sim.privateStates.CoursePrivateState;
 import bgu.atd.a1.sim.privateStates.StudentPrivateState;
 import com.sun.xml.internal.ws.api.ha.StickyFeature;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParticipatingInCourseAction extends Action<String> {
+public class ParticipatingInCourseAction extends Action<Pair<Boolean, String>> {
     private String studentId;
     private String courseName;
     private Integer grade;
@@ -28,10 +29,10 @@ public class ParticipatingInCourseAction extends Action<String> {
         CoursePrivateState courseActorState = (CoursePrivateState) actorState;
 
         if(courseActorState.getAvailableSpots() == -1)
-            complete("The course is closed");
+            complete(new Pair<>(false, "The course is closed"));
 
         if (courseActorState.getRegStudents().contains(studentId))
-            complete("The student with Id " + studentId + " is already registered to " + courseName + "Course.");
+            complete(new Pair<>(false, "The student with Id " + studentId + " is already registered to " + courseName + "Course."));
 
         List<Action<Boolean>> actionsDependency1 = new ArrayList<>();
         List<Action<Boolean>> actionsDependency2 = new ArrayList<>();
@@ -45,20 +46,20 @@ public class ParticipatingInCourseAction extends Action<String> {
         then(actionsDependency1, () -> {
             if (actionsDependency1.get(0).getResult().get()) { // the student has all pre courses
                 if (courseActorState.getAvailableSpots() <= 0) {
-                    complete("Failed in registering student with Id " + studentId + " to " + courseName + "Course. There are no available spots.");
+                    complete(new Pair<>(false, "Failed in registering student with Id " + studentId + " to " + courseName + "Course. There are no available spots."));
                 } else {
                     courseActorState.registerStudent(studentId);
                     then(actionsDependency2, () -> {
                         if (actionsDependency1.get(0).getResult().get()) { // the course has been added to the student's grades sheet
-                            complete("The student with Id " + studentId + " is registered to the course with Id " + courseName + "successfully");
+                            complete(new Pair<>(true, "The student with Id " + studentId + " is registered to the course with Id " + courseName + "successfully"));
                         } else {
-                            complete("Failed in registering student with Id " + studentId + " to " + courseName + "Course.");
+                            complete(new Pair<>(false, "Failed in registering student with Id " + studentId + " to " + courseName + "Course."));
                         }
                     });
                     sendMessage(addCourseToGradesSheetAction, studentId, studentState);
                 }
             } else {
-                complete("Failed in registering student with Id " + studentId + " to " + courseName + "Course. Some pre courses are missing");
+                complete(new Pair<>(false, "Failed in registering student with Id " + studentId + " to " + courseName + "Course. Some pre courses are missing"));
             }
         });
         sendMessage(checkPreCoursesOfStudentAction, studentId, studentState);

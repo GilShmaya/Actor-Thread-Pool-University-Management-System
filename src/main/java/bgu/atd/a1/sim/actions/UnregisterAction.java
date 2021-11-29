@@ -4,11 +4,12 @@ import bgu.atd.a1.Action;
 import bgu.atd.a1.PrivateState;
 import bgu.atd.a1.sim.privateStates.CoursePrivateState;
 import bgu.atd.a1.sim.privateStates.StudentPrivateState;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnregisterAction extends Action<String> {
+public class UnregisterAction extends Action<Pair<Boolean, String>> {
     private final String studentId;
     private final String courseName;
 
@@ -30,10 +31,10 @@ public class UnregisterAction extends Action<String> {
 
         PrivateState studentPrivateState = pool.getPrivateState(studentId);
         if (studentPrivateState == null || !(studentPrivateState instanceof StudentPrivateState))
-            complete("Failed in unregistering student with Id " + studentId + " to " + courseName + " Course. Student is not found");
+            complete(new Pair<>(false, "Failed in unregistering student with Id " + studentId + " to " + courseName + " Course. Student is not found"));
 
         if (!courseActorState.getRegStudents().contains(studentId))
-            complete("The student with Id " + studentId + " is not registered to " + courseName + " Course.");
+            complete(new Pair<>(false, "The student with Id " + studentId + " is not registered to " + courseName + " Course."));
 
         List<Action<Boolean>> actionsDependency = new ArrayList<>();
         Action<Boolean> removeCourseFromGradesSheetAction = new RemoveCourseFromGradesSheetAction(
@@ -43,9 +44,9 @@ public class UnregisterAction extends Action<String> {
         then(actionsDependency, () -> {
             if (actionsDependency.get(0).getResult().get()) {
                 courseActorState.unregisterAvailableSpots(studentId);
-                complete("The student with Id " + studentId + "is unregistered from the course with Id " + courseName + " successfully");
+                complete(new Pair<>(true, "The student with Id " + studentId + "is unregistered from the course with Id " + courseName + " successfully"));
             } else {
-                complete("Failed in unregistering student with Id " + studentId + " to " + courseName + " Course. The student is already unregistered");
+                complete(new Pair<>(false, "Failed in unregistering student with Id " + studentId + " to " + courseName + " Course. The student is already unregistered"));
             }
         });
         sendMessage(removeCourseFromGradesSheetAction, studentId, studentPrivateState);
