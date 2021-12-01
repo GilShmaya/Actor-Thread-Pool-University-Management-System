@@ -12,39 +12,48 @@ import java.util.HashMap;
  */
 public class WarehousePrivateState extends PrivateState {
     HashMap<String, Computer> computers = new HashMap<>();
-    HashMap<String, Boolean> isAcquired = new HashMap<>();
+
+    // key: computer name, value: department name or null if available
+    HashMap<String, String> acquiredToDepartment = new HashMap<>();
 
     public WarehousePrivateState() {
         computers = new HashMap<>();
-        isAcquired = new HashMap<>();
+        acquiredToDepartment = new HashMap<>();
     }
 
     public void addComputer(String computerName, Computer computer) {
         if (computerName.contains(computerName))
             throw new IllegalArgumentException("the computer is already exist");
         computers.put(computerName, computer);
-        isAcquired.put(computerName, false);
+        acquiredToDepartment.put(computerName, null);
     }
 
     public Boolean isAcquired(String computerName) {
         if (!computerName.contains(computerName))
             return false;
-        return isAcquired.get(computerName);
+        return acquiredToDepartment.get(computerName) != null;
     }
 
-    public Computer acquired(String computerName) {
+    public Boolean acquired(String computerName, String department) {
         if (!computerName.contains(computerName))
             throw new IllegalArgumentException("the computer is not exist");
         if (!isAcquired(computerName)) {
-            isAcquired.put(computerName, true);
-            return computers.get(computerName);
+            acquiredToDepartment.put(computerName, department);
+            return true;
         }
-        return null; // the computer is not available
+        return false; // the computer is not available
     }
 
     public void unAcquired(String computerName) {
         if (!computerName.contains(computerName))
             throw new IllegalArgumentException("the computer is not exist");
-        isAcquired.put(computerName, false);
+        acquiredToDepartment.put(computerName, null);
+    }
+
+    // Return the computer only in case that the department acquired this computer or null if otherwise.
+    public Computer getComputer(String computerName, String department){
+        if(acquiredToDepartment.get(computerName).equals(department))
+            return computers.get(computerName);
+        return null;
     }
 }
