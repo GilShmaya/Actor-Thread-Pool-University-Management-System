@@ -77,7 +77,7 @@ public class Simulator {
             case "Add Spaces":
                 action = new OpenNewPlacesInACourseAction(actionName, actionArgs.courseName, actionArgs.newAvailablePlaces);
                 actorName = actionArgs.courseName;
-                actorState = actorThreadPool.getPrivateState(actionArgs.courseName);
+                actorState = actorThreadPool.getPrivateState(actionArgs.courseName);x
             case "Administrative Check":
                 action = new CheckAdministrativeObligationsAction(actionName, actionArgs.departmentName, actionArgs.studentsId, actionArgs.courseName, actionArgs.conditions);
                 actorName = actionArgs.departmentName;
