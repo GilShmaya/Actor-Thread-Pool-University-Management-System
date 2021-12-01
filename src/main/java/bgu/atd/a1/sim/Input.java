@@ -30,10 +30,10 @@ public class Input {
         public String space;
 
         @SerializedName("Prerequisites")
-        public String prerequisites;
+        public List<String> prerequisites;
 
         @SerializedName("Student")
-        public String studentName;
+        public String studentId;
 
         @SerializedName("Grade")
         public List<String> grades;
@@ -46,7 +46,8 @@ public class Input {
 
         @SerializedName("Computer")
         public String computer;
-
+        @SerializedName("Students")
+        public List<String> studentsId;
         @SerializedName("Conditions")
         public List<String> conditions;
     }
