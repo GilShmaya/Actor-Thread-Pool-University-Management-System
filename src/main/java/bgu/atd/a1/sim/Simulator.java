@@ -7,8 +7,11 @@ package bgu.atd.a1.sim;
 import java.io.IOException;
 import java.util.HashMap;
 
+import bgu.atd.a1.Action;
 import bgu.atd.a1.ActorThreadPool;
 import bgu.atd.a1.PrivateState;
+import bgu.atd.a1.sim.actions.OpenANewCourseAction;
+import javafx.util.Pair;
 
 /**
  * A class describing the simulator for part 2 of the assignment
@@ -16,15 +19,23 @@ import bgu.atd.a1.PrivateState;
 public class Simulator {
 
 	
-	public static ActorThreadPool actorThreadPool;
+	private static ActorThreadPool actorThreadPool;
+	private static Input input;
 	
 	/**
 	* Begin the simulation Should not be called before attachActorThreadPool()
 	*/
     public static void start(){
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		input.phase1.forEach(actorThreadPool.submit());
+
     }
+
+	private void getAction(Input.ActionArgs actionArgs){
+		switch (actionArgs.actionName){
+			case "Open Course":
+				OpenANewCourseAction(actionArgs.actionName, actionArgs.departmentName, actionArgs.courseName, actionArgs.space);
+		}
+	}
 	
 	/**
 	* attach an ActorThreadPool to the Simulator, this ActorThreadPool will be used to run the simulation
@@ -47,12 +58,11 @@ public class Simulator {
 	
 	public static int main(String [] args){
 
-		Input input = new Input();
 		try{
 			input = JsonInputReader.getInputFromJson(args[0]);
 		}catch (IOException e){}
 
-		attachActorThreadPool(new ActorThreadPool(input.getThread()));
+		attachActorThreadPool(new ActorThreadPool(input.threads));
 
 		start();
 		return 1;

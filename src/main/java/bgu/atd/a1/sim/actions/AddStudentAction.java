@@ -2,6 +2,7 @@ package bgu.atd.a1.sim.actions;
 
 import bgu.atd.a1.Action;
 import bgu.atd.a1.sim.privateStates.DepartmentPrivateState;
+import bgu.atd.a1.sim.privateStates.StudentPrivateState;
 import javafx.util.Pair;
 
 import java.util.List;
@@ -24,9 +25,9 @@ public class AddStudentAction extends Action<Pair<Boolean, String>> {
         if (studentList.contains(studentId))
             complete(new Pair<>(false, "Failed adding student to department. The student with Id " + studentId + " has been already added to " + departmentName + " department"));
         else {
+            sendMessage(new InitializeStudentDetailsAction("InitializeStudentDetails"), studentId, new StudentPrivateState());
             studentList.add(studentId);
             complete(new Pair<>(true, "The student with Id " + studentId + " was added successfully to " + departmentName + " department"));
         }
-
     }
 }
