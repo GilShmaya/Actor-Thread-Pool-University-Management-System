@@ -34,26 +34,20 @@ public class WarehousePrivateState extends PrivateState {
         return acquiredToDepartment.get(computerName) != null;
     }
 
-    public Boolean acquired(String computerName, String department) {
+    // Return the computer only in case that the computer is available or null if otherwise.
+    public Computer acquired(String computerName, String department) {
         if (!computerName.contains(computerName))
             throw new IllegalArgumentException("the computer is not exist");
         if (!isAcquired(computerName)) {
             acquiredToDepartment.put(computerName, department);
-            return true;
+            return computers.get(computerName);
         }
-        return false; // the computer is not available
+        return null; // the computer is not available
     }
 
-    public void unAcquired(String computerName) {
+    public void release(String computerName) {
         if (!computerName.contains(computerName))
             throw new IllegalArgumentException("the computer is not exist");
         acquiredToDepartment.put(computerName, null);
-    }
-
-    // Return the computer only in case that the department acquired this computer or null if otherwise.
-    public Computer getComputer(String computerName, String department){
-        if(acquiredToDepartment.get(computerName).equals(department))
-            return computers.get(computerName);
-        return null;
     }
 }

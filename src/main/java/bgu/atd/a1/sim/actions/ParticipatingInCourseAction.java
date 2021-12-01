@@ -41,7 +41,7 @@ public class ParticipatingInCourseAction extends Action<Pair<Boolean, String>> {
                 "Add Course To Grades Sheet Action", studentId, courseName, grade);
         actionsDependency1.add(checkPreCoursesOfStudentAction);
         actionsDependency2.add(addCourseToGradesSheetAction);
-        PrivateState studentState = new StudentPrivateState();
+        PrivateState studentState = pool.getPrivateState(studentId);
 
         then(actionsDependency1, () -> {
             if (actionsDependency1.get(0).getResult().get()) { // the student has all pre courses

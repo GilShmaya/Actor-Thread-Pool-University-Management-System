@@ -14,11 +14,11 @@ public class OpenANewCourseAction extends Action<Pair<Boolean, String>> {
     private final int space;
     private final List<String> prerequisites;
 
-    public OpenANewCourseAction(String actionName, String departmentName, String courseName, int space, List<String> prerequisites) {
+    public OpenANewCourseAction(String actionName, String departmentName, String courseName, String space, List<String> prerequisites) {
         setActionName(actionName);
         this.departmentName = departmentName;
         this.courseName = courseName;
-        this.space = space;
+        this.space = Integer.parseInt(space);
         this.prerequisites = prerequisites;
     }
 
@@ -27,8 +27,8 @@ public class OpenANewCourseAction extends Action<Pair<Boolean, String>> {
         if(!(actorState instanceof DepartmentPrivateState))
             throw new IllegalAccessException("The actor should be in type Department");
         List<Action<Boolean>> actionsDependency = new ArrayList<>();
-        Action<Boolean> setCourseDetailsAction = new InitializeCourseDetailsAction("Initialize Course Details", departmentName, courseName, space, prerequisites);
-        actionsDependency.add(setCourseDetailsAction);
+        Action<Boolean> initializeCourseDetailsAction = new InitializeCourseDetailsAction("Initialize Course Details", departmentName, courseName, space, prerequisites);
+        actionsDependency.add(initializeCourseDetailsAction);
         then(actionsDependency, () -> {
                     Boolean confirmationResult = actionsDependency.get(0).getResult().get();
                     if (confirmationResult) {
@@ -39,6 +39,6 @@ public class OpenANewCourseAction extends Action<Pair<Boolean, String>> {
                         complete(new Pair<>(false, "Failed to open the new course " + courseName + ". The course id already opened"));
                 }
         );
-        sendMessage(setCourseDetailsAction, courseName, new CoursePrivateState());
+        sendMessage(initializeCourseDetailsAction, courseName, new CoursePrivateState());
     }
 }
