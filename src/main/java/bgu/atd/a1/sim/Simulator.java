@@ -7,6 +7,7 @@ package bgu.atd.a1.sim;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import bgu.atd.a1.Action;
@@ -14,6 +15,7 @@ import bgu.atd.a1.ActorThreadPool;
 import bgu.atd.a1.PrivateState;
 import bgu.atd.a1.sim.actions.*;
 import bgu.atd.a1.sim.privateStates.DepartmentPrivateState;
+import bgu.atd.a1.sim.privateStates.WarehousePrivateState;
 import javafx.util.Pair;
 
 /**
@@ -32,6 +34,9 @@ public class Simulator {
      */
 
     public static void start() throws InterruptedException {
+        WarehousePrivateState warehouse = new WarehousePrivateState();
+        input.computers.forEach(computer -> actorThreadPool.submit(new AddComputerAction(computer.computerType, computer), "Warehouse", warehouse));
+
         phase = new CountDownLatch(input.phase1.size());
         for (Input.ActionArgs action : input.phase1)
             submitAction(action);
@@ -40,11 +45,9 @@ public class Simulator {
         for (Input.ActionArgs action : input.phase2)
             submitAction(action);
         phase.await();
-
         for (Input.ActionArgs action : input.phase3)
             submitAction(action);
-
-
+        phase.await();
     }
 
     private static void submitAction(Input.ActionArgs actionArgs) {
@@ -77,7 +80,7 @@ public class Simulator {
             case "Add Spaces":
                 action = new OpenNewPlacesInACourseAction(actionName, actionArgs.courseName, actionArgs.newAvailablePlaces);
                 actorName = actionArgs.courseName;
-                actorState = actorThreadPool.getPrivateState(actionArgs.courseName);x
+                actorState = actorThreadPool.getPrivateState(actionArgs.courseName);
             case "Administrative Check":
                 action = new CheckAdministrativeObligationsAction(actionName, actionArgs.departmentName, actionArgs.studentsId, actionArgs.courseName, actionArgs.conditions);
                 actorName = actionArgs.departmentName;
@@ -121,6 +124,9 @@ public class Simulator {
         attachActorThreadPool(new ActorThreadPool(input.threads));
 
         start();
+
+        SerializeOutputWriter.getStringToSerFile(this);
+
         return 1;
     }
 }
