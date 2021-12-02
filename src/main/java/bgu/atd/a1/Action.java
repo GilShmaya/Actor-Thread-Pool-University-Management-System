@@ -18,10 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Action<R> {
 
     protected ActorThreadPool pool;
-    private String actorName;
+    protected String actorName;
     protected PrivateState actorState;
     private String actionName;
     private Promise<R> promiseResult = new Promise<>();
+    private callback callback;
 
 
     /**
@@ -43,16 +44,16 @@ public abstract class Action<R> {
      */
     /*package*/
     final void handle(ActorThreadPool pool, String actorId, PrivateState actorState) {
-        if (getResult().isResolved()) {
+        if (callback == null) {
             this.pool = pool;
             this.actorName = actorId;
             this.actorState = actorState;
             try {
                 start();
-            }catch (IllegalAccessException e){
+            } catch (IllegalAccessException e) {
             }
         } else {
-            actorState.addRecord(getActionName());
+            callback.call();
         }
     }
 
@@ -74,7 +75,7 @@ public abstract class Action<R> {
                     .subscribe(() ->
                     {
                         if (counter.decrementAndGet() == 0) {
-                            callback.call();
+                            this.callback = callback;
                             sendMessage(this, actorName, actorState);
                         }
                     });
@@ -89,6 +90,8 @@ public abstract class Action<R> {
      */
     protected final void complete(R result) {
         promiseResult.resolve(result);
+        if (getActionName() != null)
+            actorState.addRecord(getActionName());
     }
 
     /**

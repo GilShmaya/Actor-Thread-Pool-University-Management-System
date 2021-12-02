@@ -8,7 +8,7 @@ public class AcquireComputerAction extends Action<Computer> {
     private final String departmentName;
     private final String computerName;
 
-    public AcquireComputerAction(String actionName, String departmentName, String computerName) {
+    public AcquireComputerAction(String departmentName, String computerName) {
         this.departmentName = departmentName;
         this.computerName = computerName;
     }

@@ -9,8 +9,7 @@ public class AddCourseToGradesSheetAction extends Action<Boolean> {
     private String courseName;
     private Integer grade;
 
-    public AddCourseToGradesSheetAction(String actionName, String studentId, String courseName, Integer grade) {
-        setActionName(actionName);
+    public AddCourseToGradesSheetAction(String studentId, String courseName, Integer grade) {
         this.studentId = studentId;
         this.courseName = courseName;
         this.grade = grade;

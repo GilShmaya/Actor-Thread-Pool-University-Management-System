@@ -9,7 +9,6 @@ public class AddComputerAction extends Action<Boolean> {
     private final Computer computer;
 
     public AddComputerAction(String computerName, Computer computer) {
-        setActionName("Add New Computer");
         this.computerName = computerName;
         this.computer = computer;
     }

@@ -19,6 +19,7 @@ public class ActorThreadPool {
     private Map<String, Queue<Action>> actionQueue;
     private LinkedBlockingQueue<String> availableActors;
     private Queue<String> unavailableActors;
+    private int threadsNum;
     private ExecutorService threads;
 
 
@@ -34,10 +35,11 @@ public class ActorThreadPool {
      *                 pool
      */
     public ActorThreadPool(int nThreads) {
-        this.actors = new ConcurrentHashMap<>();
+        this.actors = new HashMap<>();
         this.actionQueue = new HashMap<>();
         this.availableActors = new LinkedBlockingQueue<>();
         this.unavailableActors = new ConcurrentLinkedDeque<>();
+        this.threadsNum = nThreads;
         this.threads = Executors.newFixedThreadPool(nThreads);
     }
 
@@ -74,10 +76,15 @@ public class ActorThreadPool {
             if (!actors.containsKey(actorId)) {
                 actors.put(actorId, actorState);
                 actionQueue.put(actorId, new ConcurrentLinkedDeque<>());
-                availableActors.add(actorId);
             }
         }
-            actionQueue.get(actorId).add(action);
+        actionQueue.get(actorId).add(action);
+        synchronized (availableActors) {
+            if (!unavailableActors.contains(actorId) && !availableActors.contains(actorId)) {
+                availableActors.add(actorId);
+                availableActors.notifyAll();
+            }
+        }
     }
 
     /**
@@ -97,17 +104,8 @@ public class ActorThreadPool {
      * start the threads belongs to this thread pool
      */
     public void start() {
-        while (!threads.isShutdown()) {
-            threads.execute(() -> {
-                try {
-                    String actorName = availableActors.take();
-                    PrivateState actorState = actors.get(actorName);
-                    actionQueue.get(actorName).poll().handle(this, actorName, actorState);
-                    availableActors.add(actorName);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
+        for (int i = 0; i < threadsNum; i++) {
+            threads.execute(new HandleActorTask(this, actors, actionQueue, availableActors, unavailableActors, threadsNum, threads));
         }
     }
 }

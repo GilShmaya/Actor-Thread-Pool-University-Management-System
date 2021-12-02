@@ -17,26 +17,27 @@ public class WarehousePrivateState extends PrivateState {
     HashMap<String, String> acquiredToDepartment = new HashMap<>();
 
     public WarehousePrivateState() {
+        super();
         computers = new HashMap<>();
         acquiredToDepartment = new HashMap<>();
     }
 
     public void addComputer(String computerName, Computer computer) {
-        if (computerName.contains(computerName))
-            throw new IllegalArgumentException("the computer is already exist");
+        if (computers.containsKey(computerName))
+            throw new IllegalArgumentException("the computer " + computerName + " is already exist");
         computers.put(computerName, computer);
         acquiredToDepartment.put(computerName, null);
     }
 
     public Boolean isAcquired(String computerName) {
-        if (!computerName.contains(computerName))
+        if (!computers.containsKey(computerName))
             return false;
         return acquiredToDepartment.get(computerName) != null;
     }
 
     // Return the computer only in case that the computer is available or null if otherwise.
     public Computer acquired(String computerName, String department) {
-        if (!computerName.contains(computerName))
+        if (!computers.containsKey(computerName))
             throw new IllegalArgumentException("the computer is not exist");
         if (!isAcquired(computerName)) {
             acquiredToDepartment.put(computerName, department);
@@ -46,7 +47,7 @@ public class WarehousePrivateState extends PrivateState {
     }
 
     public void release(String computerName) {
-        if (!computerName.contains(computerName))
+        if (!computers.containsKey(computerName))
             throw new IllegalArgumentException("the computer is not exist");
         acquiredToDepartment.put(computerName, null);
     }

@@ -11,8 +11,7 @@ public class AddStudentAction extends Action<Pair<Boolean, String>> {
     private final String departmentName;
     private final String studentId;
 
-    public AddStudentAction(String actionName, String departmentName, String studentId) {
-        setActionName(actionName);
+    public AddStudentAction(String departmentName, String studentId) {
         this.departmentName = departmentName;
         this.studentId = studentId;
     }
@@ -25,7 +24,8 @@ public class AddStudentAction extends Action<Pair<Boolean, String>> {
         if (studentList.contains(studentId))
             complete(new Pair<>(false, "Failed adding student to department. The student with Id " + studentId + " has been already added to " + departmentName + " department"));
         else {
-            sendMessage(new InitializeStudentDetailsAction("InitializeStudentDetails"), studentId, new StudentPrivateState());
+            StudentPrivateState studentPrivateState = pool.getPrivateState(studentId) == null ? new StudentPrivateState() : (StudentPrivateState) pool.getPrivateState(studentId);
+            sendMessage(new InitializeStudentDetailsAction(), studentId, studentPrivateState);
             studentList.add(studentId);
             complete(new Pair<>(true, "The student with Id " + studentId + " was added successfully to " + departmentName + " department"));
         }

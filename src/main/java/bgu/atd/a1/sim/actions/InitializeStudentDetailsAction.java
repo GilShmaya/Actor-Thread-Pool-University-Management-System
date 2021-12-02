@@ -5,8 +5,7 @@ import bgu.atd.a1.sim.privateStates.StudentPrivateState;
 
 public class InitializeStudentDetailsAction extends Action<Boolean> {
 
-    public InitializeStudentDetailsAction(String actionName) {
-        setActionName(actionName);
+    public InitializeStudentDetailsAction() {
     }
 
     @Override

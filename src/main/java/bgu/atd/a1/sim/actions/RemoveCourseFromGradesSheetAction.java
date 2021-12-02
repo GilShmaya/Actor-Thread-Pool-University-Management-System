@@ -7,8 +7,7 @@ public class RemoveCourseFromGradesSheetAction extends Action<Boolean> {
     private String studentId;
     private String courseName;
 
-    public RemoveCourseFromGradesSheetAction(String actionName, String studentId, String courseName) {
-        setActionName(actionName);
+    public RemoveCourseFromGradesSheetAction(String studentId, String courseName) {
         this.studentId = studentId;
         this.courseName = courseName;
     }

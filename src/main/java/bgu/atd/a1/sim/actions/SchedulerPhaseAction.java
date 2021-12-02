@@ -11,8 +11,8 @@ public class SchedulerPhaseAction extends Action<Boolean> {
     private final Action<Pair<Boolean, String>> action;
     private final String actorName;
 
-    public SchedulerPhaseAction(Action<Pair<Boolean, String>> action, String actorName) {
-        setActionName("Scheduler");
+    public SchedulerPhaseAction(String actionName, Action<Pair<Boolean, String>> action, String actorName) {
+        setActionName(actionName);
         this.action = action;
         this.actorName = actorName;
     }
@@ -22,8 +22,8 @@ public class SchedulerPhaseAction extends Action<Boolean> {
         List<Action<Pair<Boolean, String>>> actionsDependency = new ArrayList<>();
         actionsDependency.add(action);
         then(actionsDependency, () -> {
-            Simulator.phase.countDown();
             complete(true);
+            Simulator.phase.countDown();
         });
         sendMessage(action, actorName, actorState);
     }

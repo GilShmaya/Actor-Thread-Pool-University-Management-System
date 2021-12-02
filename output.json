@@ -1,0 +1,104 @@
+{
+  "CS": {
+    "courseList": [
+      "Intro To CS",
+      "SPL",
+      "Data Structures"
+    ],
+    "studentList": [
+      "123456789",
+      "5959595959"
+    ],
+    "history": [
+      "Add Student",
+      "Add Student",
+      "Open Course",
+      "Open Course",
+      "Open Course"
+    ]
+  },
+  "Warehouse": {
+    "computers": {
+      "A": {
+        "Type": "A",
+        "Sig Fail": 999283,
+        "Sig Success": 1234666
+      },
+      "B": {
+        "Type": "B",
+        "Sig Fail": 5555353,
+        "Sig Success": 4424232
+      }
+    },
+    "acquiredToDepartment": {},
+    "history": []
+  },
+  "Data Structures": {
+    "availableSpots": 100,
+    "registered": 0,
+    "regStudents": [],
+    "prequisites": [
+      "Intro To CS"
+    ],
+    "history": [
+      "Participate In Course",
+      "Unregister"
+    ]
+  },
+  "123456789": {
+    "grades": {
+      "Intro To CS": 77,
+      "SPL": 98
+    },
+    "signature": 999283,
+    "history": []
+  },
+  "132424353": {
+    "grades": {},
+    "signature": 0,
+    "history": []
+  },
+  "5959595959": {
+    "grades": {
+      "Intro To CS": 94
+    },
+    "signature": 999283,
+    "history": []
+  },
+  "Math": {
+    "courseList": [],
+    "studentList": [
+      "132424353"
+    ],
+    "history": [
+      "Add Student"
+    ]
+  },
+  "Intro To CS": {
+    "availableSpots": 198,
+    "registered": 2,
+    "regStudents": [
+      "5959595959",
+      "123456789"
+    ],
+    "prequisites": [],
+    "history": [
+      "Participate In Course",
+      "Participate In Course"
+    ]
+  },
+  "SPL": {
+    "availableSpots": 0,
+    "registered": 1,
+    "regStudents": [
+      "123456789"
+    ],
+    "prequisites": [
+      "Intro To CS"
+    ],
+    "history": [
+      "Participate In Course",
+      "Participate In Course"
+    ]
+  }
+}

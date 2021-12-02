@@ -13,8 +13,7 @@ public class UnregisterAction extends Action<Pair<Boolean, String>> {
     private final String studentId;
     private final String courseName;
 
-    public UnregisterAction(String actionName, String studentId, String courseName) {
-        setActionName(actionName);
+    public UnregisterAction(String studentId, String courseName) {
         this.studentId = studentId;
         this.courseName = courseName;
     }
@@ -30,15 +29,16 @@ public class UnregisterAction extends Action<Pair<Boolean, String>> {
         CoursePrivateState courseActorState = (CoursePrivateState) actorState;
 
         PrivateState studentPrivateState = pool.getPrivateState(studentId);
-        if (studentPrivateState == null || !(studentPrivateState instanceof StudentPrivateState))
+        if (studentPrivateState == null || !(studentPrivateState instanceof StudentPrivateState)) {
             complete(new Pair<>(false, "Failed in unregistering student with Id " + studentId + " to " + courseName + " Course. Student is not found"));
-
-        if (!courseActorState.getRegStudents().contains(studentId))
+            return;
+        }
+        if (!courseActorState.getRegStudents().contains(studentId)) {
             complete(new Pair<>(false, "The student with Id " + studentId + " is not registered to " + courseName + " Course."));
-
+            return;
+        }
         List<Action<Boolean>> actionsDependency = new ArrayList<>();
-        Action<Boolean> removeCourseFromGradesSheetAction = new RemoveCourseFromGradesSheetAction(
-                "Remove Course From Grades Sheet Action", studentId, courseName);
+        Action<Boolean> removeCourseFromGradesSheetAction = new RemoveCourseFromGradesSheetAction(studentId, courseName);
         actionsDependency.add(removeCourseFromGradesSheetAction);
 
         then(actionsDependency, () -> {

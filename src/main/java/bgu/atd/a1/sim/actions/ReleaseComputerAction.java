@@ -7,8 +7,7 @@ public class ReleaseComputerAction extends Action<Boolean> {
     private final String departmentName;
     private final String computerName;
 
-    public ReleaseComputerAction(String actionName, String departmentName, String computerName) {
-        setActionName(actionName);
+    public ReleaseComputerAction(String departmentName, String computerName) {
         this.departmentName = departmentName;
         this.computerName = computerName;
     }
