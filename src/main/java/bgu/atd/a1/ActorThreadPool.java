@@ -71,11 +71,13 @@ public class ActorThreadPool {
      */
     public void submit(Action<?> action, String actorId, PrivateState actorState) {
         synchronized (actorState) { // avoid double submit of the same actor at the same time
-            actors.getOrDefault(actorId, actorState);
-            actionQueue.getOrDefault(actorId, new ConcurrentLinkedDeque<>()).add(action);
-            if (!unavailableActors.contains(actorId) && !availableActors.contains(actorId))
+            if (!actors.containsKey(actorId)) {
+                actors.put(actorId, actorState);
+                actionQueue.put(actorId, new ConcurrentLinkedDeque<>());
                 availableActors.add(actorId);
+            }
         }
+            actionQueue.get(actorId).add(action);
     }
 
     /**
@@ -99,9 +101,9 @@ public class ActorThreadPool {
             threads.execute(() -> {
                 try {
                     String actorName = availableActors.take();
-                    unavailableActors.add(actorName);
                     PrivateState actorState = actors.get(actorName);
                     actionQueue.get(actorName).poll().handle(this, actorName, actorState);
+                    availableActors.add(actorName);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

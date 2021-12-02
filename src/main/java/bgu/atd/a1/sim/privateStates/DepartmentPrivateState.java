@@ -1,5 +1,6 @@
 package bgu.atd.a1.sim.privateStates;
 
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -18,8 +19,8 @@ public class DepartmentPrivateState extends PrivateState{
 	 * this may cause automatic tests to fail..
 	 */
 	public DepartmentPrivateState() {
-		//TODO: replace method body with real implementation
-		throw new UnsupportedOperationException("Not Implemented Yet.");
+		courseList = new LinkedList<>();
+		studentList = new LinkedList<>();
 	}
 
 	public List<String> getCourseList() {

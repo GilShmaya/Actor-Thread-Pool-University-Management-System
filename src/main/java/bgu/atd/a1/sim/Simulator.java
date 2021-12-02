@@ -5,7 +5,10 @@
  */
 package bgu.atd.a1.sim;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -60,36 +63,43 @@ public class Simulator {
             case "Open Course":
                 action = new OpenANewCourseAction(actionName, actionArgs.departmentName, actionArgs.courseName, actionArgs.space, actionArgs.prerequisites);
                 actorName = actionArgs.departmentName;
-                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? actorThreadPool.getPrivateState(actionArgs.departmentName) : new DepartmentPrivateState();
+                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? new DepartmentPrivateState() : actorThreadPool.getPrivateState(actionArgs.departmentName);
+                break;
             case "Add Student":
                 action = new AddStudentAction(actionName, actionArgs.departmentName, actionArgs.studentId);
                 actorName = actionArgs.departmentName;
-                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? actorThreadPool.getPrivateState(actionArgs.departmentName) : new DepartmentPrivateState();
+                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? new DepartmentPrivateState() : actorThreadPool.getPrivateState(actionArgs.departmentName);
+                break;
             case "Participate In Course":
                 action = new ParticipatingInCourseAction(actionName, actionArgs.studentId, actionArgs.courseName, actionArgs.grades);
                 actorName = actionArgs.courseName;
                 actorState = actorThreadPool.getPrivateState(actionArgs.courseName);
+                break;
             case "Unregister":
                 action = new UnregisterAction(actionName, actionArgs.studentId, actionArgs.courseName);
                 actorName = actionArgs.courseName;
                 actorState = actorThreadPool.getPrivateState(actionArgs.courseName);
+                break;
             case "Close Course":
                 action = new CloseACourseAction(actionName, actionArgs.departmentName, actionArgs.courseName);
                 actorName = actionArgs.departmentName;
-                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? actorThreadPool.getPrivateState(actionArgs.departmentName) : new DepartmentPrivateState();
+                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? new DepartmentPrivateState() : actorThreadPool.getPrivateState(actionArgs.departmentName);
+                break;
             case "Add Spaces":
                 action = new OpenNewPlacesInACourseAction(actionName, actionArgs.courseName, actionArgs.newAvailablePlaces);
                 actorName = actionArgs.courseName;
                 actorState = actorThreadPool.getPrivateState(actionArgs.courseName);
+                break;
             case "Administrative Check":
                 action = new CheckAdministrativeObligationsAction(actionName, actionArgs.departmentName, actionArgs.studentsId, actionArgs.courseName, actionArgs.conditions);
                 actorName = actionArgs.departmentName;
-                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? actorThreadPool.getPrivateState(actionArgs.departmentName) : new DepartmentPrivateState();
-                actorThreadPool.submit(new CheckAdministrativeObligationsAction(actionName, actionArgs.departmentName, actionArgs.studentsId, actionArgs.courseName, actionArgs.conditions), actionArgs.departmentName, actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? actorThreadPool.getPrivateState(actionArgs.departmentName) : new DepartmentPrivateState());
+                actorState = actorThreadPool.getPrivateState(actionArgs.departmentName) == null ? new DepartmentPrivateState() : actorThreadPool.getPrivateState(actionArgs.departmentName);
+                break;
             case "Register With Preferences":
                 action = new RegisterWithPreferencesAction(actionName, actionArgs.studentId, actionArgs.preferences, actionArgs.grades);
                 actorName = actionArgs.studentId;
                 actorState = actorThreadPool.getPrivateState(actionArgs.studentId);
+                break;
         }
 
         actorThreadPool.submit(new SchedulerPhaseAction(action, actorName), actorName, actorState);
@@ -114,7 +124,7 @@ public class Simulator {
     }
 
 
-    public static int main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         try {
             input = JsonInputReader.getInputFromJson(args[0]);
@@ -125,8 +135,9 @@ public class Simulator {
 
         start();
 
-        SerializeOutputWriter.getStringToSerFile(this);
-
-        return 1;
+        Map<String, PrivateState> simulatorResult = end();
+        FileOutputStream outputFile = new FileOutputStream("result.ser");
+        ObjectOutputStream oos = new ObjectOutputStream(outputFile);
+        oos.writeObject(simulatorResult);
     }
 }

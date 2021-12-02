@@ -47,7 +47,10 @@ public abstract class Action<R> {
             this.pool = pool;
             this.actorName = actorId;
             this.actorState = actorState;
-            start();
+            try {
+                start();
+            }catch (IllegalAccessException e){
+            }
         } else {
             actorState.addRecord(getActionName());
         }
