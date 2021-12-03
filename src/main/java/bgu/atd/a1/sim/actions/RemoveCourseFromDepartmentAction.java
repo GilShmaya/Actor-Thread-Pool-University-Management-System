@@ -7,8 +7,7 @@ public class RemoveCourseFromDepartmentAction extends Action<Boolean> {
     private String departmentName;
     private String courseName;
 
-    public RemoveCourseFromDepartmentAction(String actionName, String departmentName, String courseName) {
-        setActionName(actionName);
+    public RemoveCourseFromDepartmentAction(String departmentName, String courseName) {
         this.departmentName = departmentName;
         this.courseName = courseName;
     }

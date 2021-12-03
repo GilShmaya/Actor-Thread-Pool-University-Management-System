@@ -19,6 +19,7 @@ public class ActorThreadPool {
     private Map<String, Queue<Action>> actionQueue;
     private LinkedBlockingQueue<String> availableActors;
     private Queue<String> unavailableActors;
+    private int threadsNum;
     private ExecutorService threads;
 
 
@@ -34,10 +35,11 @@ public class ActorThreadPool {
      *                 pool
      */
     public ActorThreadPool(int nThreads) {
-        this.actors = new ConcurrentHashMap<>();
+        this.actors = new HashMap<>();
         this.actionQueue = new HashMap<>();
         this.availableActors = new LinkedBlockingQueue<>();
         this.unavailableActors = new ConcurrentLinkedDeque<>();
+        this.threadsNum = nThreads;
         this.threads = Executors.newFixedThreadPool(nThreads);
     }
 
@@ -71,10 +73,21 @@ public class ActorThreadPool {
      */
     public void submit(Action<?> action, String actorId, PrivateState actorState) {
         synchronized (actorState) { // avoid double submit of the same actor at the same time
-            actors.getOrDefault(actorId, actorState);
-            actionQueue.getOrDefault(actorId, new ConcurrentLinkedDeque<>()).add(action);
-            if (!unavailableActors.contains(actorId) && !availableActors.contains(actorId))
+            if (!actors.containsKey(actorId)) {
+                actors.put(actorId, actorState);
+                actionQueue.put(actorId, new ConcurrentLinkedDeque<>());
+            }
+        }
+        actionQueue.get(actorId).add(action);
+        /* synchronized (availableActors) for avoiding a situation in which thread1 see that actorId is available and
+        . take it from the availableActors queue. Then, thread2 submit the actorId and add it into the availableActors queue
+        . although it's not supposed to be available.
+        */
+        synchronized (availableActors) {
+            if (!unavailableActors.contains(actorId) && !availableActors.contains(actorId)) {
                 availableActors.add(actorId);
+                availableActors.notifyAll();
+            }
         }
     }
 
@@ -88,24 +101,15 @@ public class ActorThreadPool {
      * @throws InterruptedException if the thread that shut down the threads is interrupted
      */
     public void shutdown() throws InterruptedException {
-        threads.shutdown();
+        threads.shutdownNow();
     }
 
     /**
      * start the threads belongs to this thread pool
      */
     public void start() {
-        while (!threads.isShutdown()) {
-            threads.execute(() -> {
-                try {
-                    String actorName = availableActors.take();
-                    unavailableActors.add(actorName);
-                    PrivateState actorState = actors.get(actorName);
-                    actionQueue.get(actorName).poll().handle(this, actorName, actorState);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
+        for (int i = 0; i < threadsNum; i++) {
+            threads.execute(new HandleActorTask(this, actors, actionQueue, availableActors, unavailableActors, threadsNum, threads));
         }
     }
 }

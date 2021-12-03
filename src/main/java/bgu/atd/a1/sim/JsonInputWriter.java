@@ -18,9 +18,9 @@ public class JsonInputWriter {
             gson.toJson(obj, writer);
         }
 
-        try (FileWriter writer = new FileWriter(args[1])) {
-            gson.toJson(obj, writer);
-        }
+        //try (FileWriter writer = new FileWriter(args[1])) {
+        //    gson.toJson(obj, writer);
+       // }
 
     }
 }

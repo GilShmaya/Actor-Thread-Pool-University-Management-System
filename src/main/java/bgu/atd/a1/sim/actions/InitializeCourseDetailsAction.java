@@ -12,8 +12,7 @@ public class InitializeCourseDetailsAction extends Action<Boolean> {
     private final int space;
     private final List<String> prerequisites;
 
-    public InitializeCourseDetailsAction(String actionName, String departmentName, String courseName, int space, List<String> prerequisites) {
-        setActionName(actionName);
+    public InitializeCourseDetailsAction(String departmentName, String courseName, int space, List<String> prerequisites) {
         this.departmentName = departmentName;
         this.courseName = courseName;
         this.space = space;

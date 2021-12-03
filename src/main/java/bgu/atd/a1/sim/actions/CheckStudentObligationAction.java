@@ -11,8 +11,7 @@ public class CheckStudentObligationAction extends Action<Boolean> {
     private final Computer computer;
     private final List<String> conditions;
 
-    public CheckStudentObligationAction(String actionName, Computer computer, List<String> conditions) {
-        setActionName(actionName);
+    public CheckStudentObligationAction(Computer computer, List<String> conditions) {
         this.computer = computer;
         this.conditions = conditions;
     }

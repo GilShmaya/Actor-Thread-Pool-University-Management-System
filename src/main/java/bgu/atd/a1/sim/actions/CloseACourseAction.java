@@ -2,6 +2,7 @@ package bgu.atd.a1.sim.actions;
 
 import bgu.atd.a1.Action;
 import bgu.atd.a1.sim.privateStates.CoursePrivateState;
+import bgu.atd.a1.sim.privateStates.StudentPrivateState;
 import javafx.util.Pair;
 
 import java.util.LinkedList;
@@ -12,8 +13,7 @@ public class CloseACourseAction extends Action<Pair<Boolean, String>> {
     private final String departmentName;
     private final String courseName;
 
-    public CloseACourseAction(String actionName, String departmentName, String courseNae) {
-        setActionName(actionName);
+    public CloseACourseAction(String departmentName, String courseNae) {
         this.departmentName = departmentName;
         this.courseName = courseNae;
     }
@@ -24,17 +24,18 @@ public class CloseACourseAction extends Action<Pair<Boolean, String>> {
             throw new IllegalAccessException("The actor should be in type Course");
         CoursePrivateState courseActorState = (CoursePrivateState) actorState;
 
-        if (courseActorState.getAvailableSpots() == -1)
+        if (courseActorState.getAvailableSpots() == -1) {
             complete(new Pair<>(false, "The course is already closed"));
+            return;
+        }
 
         List<UnregisterAction> actionsDependency1 =
                 courseActorState.getRegStudents()
                         .stream()
                         .map(student ->
-                                new UnregisterAction("Unregister Name", student, courseName))
+                                new UnregisterAction(student, courseName))
                         .collect(Collectors.toList());
-        RemoveCourseFromDepartmentAction removeCourseFromDepartmentAction = new RemoveCourseFromDepartmentAction(
-                "Remove Course From Department Action", departmentName, courseName);
+        RemoveCourseFromDepartmentAction removeCourseFromDepartmentAction = new RemoveCourseFromDepartmentAction(departmentName, courseName);
         List<Action<Boolean>> actionsDependency2 = new LinkedList<>();
         actionsDependency2.add(removeCourseFromDepartmentAction);
 

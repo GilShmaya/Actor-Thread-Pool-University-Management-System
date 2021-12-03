@@ -7,23 +7,23 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SchedulerPhaseAction extends Action<Boolean> {
-    private final Action<Pair<Boolean, String>> action;
+public class SchedulerPhaseAction<T> extends Action<Boolean> {
+    private final Action<T> action;
     private final String actorName;
 
-    public SchedulerPhaseAction(Action<Pair<Boolean, String>> action, String actorName) {
-        setActionName("Scheduler");
+    public SchedulerPhaseAction(String actionName, Action<T> action, String actorName) {
+        setActionName(actionName);
         this.action = action;
         this.actorName = actorName;
     }
 
     @Override
     protected void start() throws IllegalAccessException {
-        List<Action<Pair<Boolean, String>>> actionsDependency = new ArrayList<>();
+        List<Action<T>> actionsDependency = new ArrayList<>();
         actionsDependency.add(action);
         then(actionsDependency, () -> {
-            Simulator.phase.countDown();
             complete(true);
+            Simulator.phase.countDown();
         });
         sendMessage(action, actorName, actorState);
     }

@@ -19,8 +19,9 @@ public class StudentPrivateState extends PrivateState{
 	 * this may cause automatic tests to fail..
 	 */
 	public StudentPrivateState() {
+		super();
 		this.grades = new HashMap<>();
-		this.signature = -1;
+		this.signature = 0;
 	}
 
 	public HashMap<String, Integer> getGrades() {

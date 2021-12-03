@@ -8,8 +8,7 @@ public class OpenNewPlacesInACourseAction extends Action<Pair<Boolean, String>> 
     private final String courseName;
     private final int newAvailablePlaces;
 
-    public OpenNewPlacesInACourseAction(String actionName, String courseName, String newAvailablePlaces) {
-        setActionName(actionName);
+    public OpenNewPlacesInACourseAction(String courseName, String newAvailablePlaces) {
         this.courseName = courseName;
         this.newAvailablePlaces = Integer.parseInt(newAvailablePlaces);
     }

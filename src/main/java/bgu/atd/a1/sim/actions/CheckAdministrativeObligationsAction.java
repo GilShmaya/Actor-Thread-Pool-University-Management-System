@@ -18,8 +18,7 @@ public class CheckAdministrativeObligationsAction extends Action<Pair<Boolean, S
     private final String computerName;
     private final List<String> conditions;
 
-    public CheckAdministrativeObligationsAction(String actionName, String departmentName, List<String> students, String computerName, List<String> conditions) {
-        setActionName(actionName);
+    public CheckAdministrativeObligationsAction(String departmentName, List<String> students, String computerName, List<String> conditions) {
         this.departmentName = departmentName;
         this.students = students;
         this.computerName = computerName;
@@ -31,12 +30,14 @@ public class CheckAdministrativeObligationsAction extends Action<Pair<Boolean, S
         if (!(actorState instanceof DepartmentPrivateState))
             throw new IllegalAccessException("The actor should be in type Department");
 
-        PrivateState warehousePrivateState = pool.getPrivateState("warehouse");
-        if (warehousePrivateState == null || !(warehousePrivateState instanceof WarehousePrivateState))
+        PrivateState warehousePrivateState = pool.getPrivateState("Warehouse");
+        if (warehousePrivateState == null || !(warehousePrivateState instanceof WarehousePrivateState)) {
             complete(new Pair<>(false, "Warehouse is not exist"));
+            return;
+        }
 
         List<Action<Computer>> actionsDependency = new ArrayList<>();
-        Action<Computer> acquireComputer = new AcquireComputerAction("Acquire computer", departmentName, computerName);
+        Action<Computer> acquireComputer = new AcquireComputerAction(departmentName, computerName);
         actionsDependency.add(acquireComputer);
 
         then(actionsDependency, () -> {
@@ -44,10 +45,10 @@ public class CheckAdministrativeObligationsAction extends Action<Pair<Boolean, S
             if (computer != null) {
                 List<Action<Boolean>> studentActionsDependency = students
                         .stream()
-                        .map(student -> new CheckStudentObligationAction("Check Student Obligation", computer, conditions))
+                        .map(student -> new CheckStudentObligationAction(computer, conditions))
                         .collect(Collectors.toList());
                 then(studentActionsDependency, () -> {
-                    sendMessage(new ReleaseComputerAction("Release Computer", departmentName, computerName), "Warehouse", warehousePrivateState);
+                    sendMessage(new ReleaseComputerAction(departmentName, computerName), "Warehouse", warehousePrivateState);
                     complete(new Pair<>(true, "Succeed to check administrative obligations"));
                 });
                 Iterator<Action<Boolean>> studentActionsIterator = studentActionsDependency.stream().iterator();
