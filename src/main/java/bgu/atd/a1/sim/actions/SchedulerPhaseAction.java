@@ -25,6 +25,7 @@ public class SchedulerPhaseAction<T> extends Action<Boolean> {
             complete(true);
             Simulator.phase.countDown();
         });
+
         sendMessage(action, actorName, actorState);
     }
 }

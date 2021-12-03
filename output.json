@@ -2,7 +2,6 @@
   "CS": {
     "courseList": [
       "Intro To CS",
-      "SPL",
       "Data Structures"
     ],
     "studentList": [
@@ -15,7 +14,19 @@
       "Add Student",
       "Add Student",
       "Open Course",
-      "Administrative Check"
+      "Administrative Check",
+      "Close Course"
+    ]
+  },
+  "Algebra": {
+    "availableSpots": 99,
+    "registered": 1,
+    "regStudents": [
+      "132424353"
+    ],
+    "prequisites": [],
+    "history": [
+      "Participate In Course"
     ]
   },
   "Data Structures": {
@@ -32,15 +43,16 @@
   },
   "123456789": {
     "grades": {
-      "Intro To CS": 77,
-      "SPL": 98
+      "Intro To CS": 77
     },
     "signature": 999283,
     "history": []
   },
   "132424353": {
-    "grades": {},
-    "signature": 0,
+    "grades": {
+      "Algebra": 99
+    },
+    "signature": 1234666,
     "history": []
   },
   "5959595959": {
@@ -51,20 +63,24 @@
     "history": []
   },
   "Math": {
-    "courseList": [],
+    "courseList": [
+      "Algebra"
+    ],
     "studentList": [
       "132424353"
     ],
     "history": [
-      "Add Student"
+      "Open Course",
+      "Add Student",
+      "Administrative Check"
     ]
   },
   "Intro To CS": {
     "availableSpots": 198,
     "registered": 2,
     "regStudents": [
-      "123456789",
-      "5959595959"
+      "5959595959",
+      "123456789"
     ],
     "prequisites": [],
     "history": [
@@ -73,11 +89,9 @@
     ]
   },
   "SPL": {
-    "availableSpots": 0,
-    "registered": 1,
-    "regStudents": [
-      "123456789"
-    ],
+    "availableSpots": -1,
+    "registered": 0,
+    "regStudents": [],
     "prequisites": [
       "Intro To CS"
     ],

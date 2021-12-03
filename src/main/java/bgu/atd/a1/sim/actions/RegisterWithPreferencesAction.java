@@ -7,6 +7,7 @@ import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 public class RegisterWithPreferencesAction extends Action<Pair<Boolean, String>> {
     private final String studentId;
@@ -32,16 +33,23 @@ public class RegisterWithPreferencesAction extends Action<Pair<Boolean, String>>
         }
 
         if (courseState != null) {
-            List<Action<Pair<Boolean, String>>> actionsDependency = new ArrayList<>();
+            List<Action<Pair<Boolean, String>>> actionsDependency1 = new ArrayList<>();
             Action<Pair<Boolean, String>> participatingInCourseAction = new ParticipatingInCourseAction(studentId, preferences.get(0), grades.subList(0, 1));
-            actionsDependency.add(participatingInCourseAction);
-            then(actionsDependency, () -> {
-                if (actionsDependency.get(0).getResult().get().getKey()) {
+            actionsDependency1.add(participatingInCourseAction);
+            CoursePrivateState finalCourseState = courseState;
+            then(actionsDependency1, () -> {
+                if (actionsDependency1.get(0).getResult().get().getKey()) {
                     complete(new Pair<>(true, "The student register successfully to the course " + preferences.get(0)));
                 } else { // failed in registering to the first course in the preference list, try the next one
                     preferences.remove(0);
                     grades.remove(0);
-                    sendMessage(this, studentId, studentActorState);
+                    List<Action<Pair<Boolean, String>>> actionsDependency2 = new ArrayList<>();
+                    Action<Pair<Boolean, String>> newRegisteringAttempt = new RegisterWithPreferencesAction(studentId, preferences, grades);
+                    actionsDependency2.add(newRegisteringAttempt);
+                    then(actionsDependency2, () -> {
+                        complete(new Pair<>(true, "Done action"));
+                    });
+                    sendMessage(newRegisteringAttempt, studentId, studentActorState);
                 }
             });
             sendMessage(participatingInCourseAction, preferences.get(0), courseState);
