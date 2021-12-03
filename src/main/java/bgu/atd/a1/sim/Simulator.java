@@ -132,7 +132,9 @@ public class Simulator {
      */
     public static HashMap<String, PrivateState> end() throws InterruptedException {
         actorThreadPool.shutdown();
-        return (HashMap<String, PrivateState>) actorThreadPool.getActors();
+        HashMap<String, PrivateState> actors = (HashMap<String, PrivateState>) actorThreadPool.getActors();
+        actors.remove("Warehouse");
+        return actors;
     }
 
 

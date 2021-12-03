@@ -12,27 +12,11 @@
     "history": [
       "Open Course",
       "Open Course",
+      "Add Student",
+      "Add Student",
       "Open Course",
-      "Add Student",
-      "Add Student",
       "Administrative Check"
     ]
-  },
-  "Warehouse": {
-    "computers": {
-      "A": {
-        "Type": "A",
-        "Sig Fail": 999283,
-        "Sig Success": 1234666
-      },
-      "B": {
-        "Type": "B",
-        "Sig Fail": 5555353,
-        "Sig Success": 4424232
-      }
-    },
-    "acquiredToDepartment": {},
-    "history": []
   },
   "Data Structures": {
     "availableSpots": 100,
@@ -79,8 +63,8 @@
     "availableSpots": 198,
     "registered": 2,
     "regStudents": [
-      "5959595959",
-      "123456789"
+      "123456789",
+      "5959595959"
     ],
     "prequisites": [],
     "history": [
