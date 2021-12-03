@@ -41,7 +41,12 @@ public class Simulator {
     public static void start() throws InterruptedException {
         actorThreadPool.start();
         WarehousePrivateState warehouse = new WarehousePrivateState();
-        input.computers.forEach(computer -> actorThreadPool.submit(new AddComputerAction(computer.computerType, computer), "Warehouse", warehouse));
+        phase = new CountDownLatch(input.computers.size());
+        input.computers.forEach(computer -> {
+                Action<Boolean> action = new AddComputerAction(computer.computerType, computer);
+                actorThreadPool.submit(new SchedulerPhaseAction(null, action, "Warehouse"), "Warehouse", warehouse);
+                });
+        phase.await();
 
         phase = new CountDownLatch(input.phase1.size());
         for (Input.ActionArgs action : input.phase1)

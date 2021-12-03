@@ -39,7 +39,7 @@ public class HandleActorTask implements Runnable {
                     unavailableActors.add(actorName);
                     actorState = actors.get(actorName);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    break;
                 }
             }
             if(!actionQueue.get(actorName).isEmpty())

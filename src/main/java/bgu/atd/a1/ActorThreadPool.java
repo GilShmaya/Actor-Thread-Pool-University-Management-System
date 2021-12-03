@@ -79,6 +79,10 @@ public class ActorThreadPool {
             }
         }
         actionQueue.get(actorId).add(action);
+        /* synchronized (availableActors) for avoiding a situation in which thread1 see that actorId is available and
+        . take it from the availableActors queue. Then, thread2 submit the actorId and add it into the availableActors queue
+        . although it's not supposed to be available.
+        */
         synchronized (availableActors) {
             if (!unavailableActors.contains(actorId) && !availableActors.contains(actorId)) {
                 availableActors.add(actorId);
@@ -97,7 +101,7 @@ public class ActorThreadPool {
      * @throws InterruptedException if the thread that shut down the threads is interrupted
      */
     public void shutdown() throws InterruptedException {
-        threads.shutdown();
+        threads.shutdownNow();
     }
 
     /**
