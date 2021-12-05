@@ -43,7 +43,7 @@ public class UnregisterAction extends Action<Pair<Boolean, String>> {
 
         then(actionsDependency, () -> {
             if (actionsDependency.get(0).getResult().get()) {
-                courseActorState.unregisterAvailableSpots(studentId);
+                courseActorState.unregisterStudent(studentId);
                 complete(new Pair<>(true, "The student with Id " + studentId + "is unregistered from the course with Id " + courseName + " successfully"));
             } else {
                 complete(new Pair<>(false, "Failed in unregistering student with Id " + studentId + " to " + courseName + " Course. The student is already unregistered"));

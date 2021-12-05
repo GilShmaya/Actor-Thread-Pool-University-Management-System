@@ -1,62 +1,42 @@
 package bgu.atd.a1.sim.actions;
 
 import bgu.atd.a1.Action;
-import bgu.atd.a1.sim.privateStates.CoursePrivateState;
-import bgu.atd.a1.sim.privateStates.StudentPrivateState;
+import bgu.atd.a1.sim.privateStates.DepartmentPrivateState;
 import javafx.util.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CloseACourseAction extends Action<Pair<Boolean, String>> {
-    private final String departmentName;
-    private final String courseName;
+    private String departmentName;
+    private String courseName;
 
-    public CloseACourseAction(String departmentName, String courseNae) {
+    public CloseACourseAction(String departmentName, String courseName) {
         this.departmentName = departmentName;
-        this.courseName = courseNae;
+        this.courseName = courseName;
     }
 
     @Override
     protected void start() throws IllegalAccessException {
-        if (!(actorState instanceof CoursePrivateState))
-            throw new IllegalAccessException("The actor should be in type Course");
-        CoursePrivateState courseActorState = (CoursePrivateState) actorState;
+        if (!(actorState instanceof DepartmentPrivateState))
+            throw new IllegalAccessException("The actor should be in type Department");
 
-        if (courseActorState.getAvailableSpots() == -1) {
-            complete(new Pair<>(false, "The course is already closed"));
+        DepartmentPrivateState departmentPrivateState = (DepartmentPrivateState) actorState;
+
+        if (!departmentPrivateState.getCourseList().contains(courseName)) {
+            complete(new Pair<>(false, "Failed, the course is not in the department"));
             return;
         }
 
-        List<UnregisterAction> actionsDependency1 =
-                courseActorState.getRegStudents()
-                        .stream()
-                        .map(student ->
-                                new UnregisterAction(student, courseName))
-                        .collect(Collectors.toList());
-        RemoveCourseFromDepartmentAction removeCourseFromDepartmentAction = new RemoveCourseFromDepartmentAction(departmentName, courseName);
-        List<Action<Boolean>> actionsDependency2 = new LinkedList<>();
-        actionsDependency2.add(removeCourseFromDepartmentAction);
+        List<Action<Boolean>> actionsDependency = new LinkedList<>();
+        Action<Boolean> unregisterStudentsAndCloseCourseAction = new UnregisterStudentsAndCloseCourseAction(departmentName, courseName);
+        actionsDependency.add(unregisterStudentsAndCloseCourseAction);
 
-        then(actionsDependency1, () -> {
-            if (actionsDependency1.stream().allMatch(action -> action.getResult().get().getKey())) {
-                courseActorState.setAvailableSpots(-1);
-                then(actionsDependency2, () -> {
-                    if (actionsDependency2.get(0).getResult().get())
-                        complete(new Pair<>(true, "The course " + courseName + " removed successfully"));
-                    else {
-                        complete(new Pair<>(false, "Failed to close the course " + courseName + "."));
-                    }
-                });
-                sendMessage(removeCourseFromDepartmentAction, departmentName, pool.getPrivateState(departmentName));
-            } else {
-                complete(new Pair<>(false, "Failed to close the course " + courseName + "."));
-            }
+        then(actionsDependency, () -> {
+            departmentPrivateState.getCourseList().remove(courseName);
+            complete(new Pair<>(true, "The course " + courseName + " removed successfully"));
         });
-        actionsDependency1
-                .forEach(action -> sendMessage(action, action.getStudentId(), pool.getPrivateState(action.getStudentId())));
-
+        sendMessage(unregisterStudentsAndCloseCourseAction, courseName, pool.getPrivateState(courseName));
 
     }
 }

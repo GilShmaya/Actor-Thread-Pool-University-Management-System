@@ -55,7 +55,7 @@ public class CoursePrivateState extends PrivateState{
 		getRegStudents().add(studentId);
 	}
 
-	public void unregisterAvailableSpots(String studentId){
+	public void unregisterStudent(String studentId){
 		availableSpots++;
 		registered--;
 		getRegStudents().remove(studentId);

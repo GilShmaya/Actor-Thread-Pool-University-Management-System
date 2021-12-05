@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class test {
+public class ConvertSerializeFileToJson {
     public static void main(String[] args) throws InterruptedException, IOException {
         ObjectInputStream in = new ObjectInputStream(new FileInputStream("result.ser"));
         int count = 0;

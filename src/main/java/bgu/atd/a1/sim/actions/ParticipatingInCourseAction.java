@@ -18,7 +18,7 @@ public class ParticipatingInCourseAction extends Action<Pair<Boolean, String>> {
     public ParticipatingInCourseAction(String studentId, String courseName, List<String> grades) {
         this.studentId = studentId;
         this.courseName = courseName;
-        this.grade = grades.get(0).equals("-") ? null : Integer.parseInt(grades.get(0));
+        this.grade = grades.get(0).equals("-") ? -1 : Integer.parseInt(grades.get(0));
     }
 
     @Override
