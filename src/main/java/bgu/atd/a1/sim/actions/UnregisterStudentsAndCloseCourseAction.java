@@ -28,6 +28,11 @@ public class UnregisterStudentsAndCloseCourseAction extends Action<Boolean> {
             complete(false);
             return;
         }
+        if (courseActorState.getRegistered() == 0) {
+            courseActorState.setAvailableSpots(-1);
+            complete(true);
+            return;
+        }
 
         List<UnregisterAction> actionsDependency1 =
                 courseActorState.getRegStudents()

@@ -6,27 +6,27 @@
     ],
     "studentList": [
       "123456789",
-      "5959595959"
+      "5959595959",
+      "123456"
     ],
     "history": [
       "Open Course",
       "Open Course",
       "Add Student",
       "Add Student",
+      "Add Student",
       "Open Course",
-      "Administrative Check",
-      "Close Course"
+      "Close Course",
+      "Administrative Check"
     ]
   },
-  "Algebra": {
-    "availableSpots": 99,
-    "registered": 1,
-    "regStudents": [
-      "132424353"
-    ],
-    "prequisites": [],
+  "123456": {
+    "grades": {
+      "Intro To CS": 89
+    },
+    "signature": 0,
     "history": [
-      "Participate In Course"
+      "Register With Preferences"
     ]
   },
   "Data Structures": {
@@ -49,10 +49,8 @@
     "history": []
   },
   "132424353": {
-    "grades": {
-      "Algebra": 99
-    },
-    "signature": 1234666,
+    "grades": {},
+    "signature": 0,
     "history": []
   },
   "5959595959": {
@@ -63,24 +61,21 @@
     "history": []
   },
   "Math": {
-    "courseList": [
-      "Algebra"
-    ],
+    "courseList": [],
     "studentList": [
       "132424353"
     ],
     "history": [
-      "Open Course",
-      "Add Student",
-      "Administrative Check"
+      "Add Student"
     ]
   },
   "Intro To CS": {
-    "availableSpots": 198,
-    "registered": 2,
+    "availableSpots": 197,
+    "registered": 3,
     "regStudents": [
       "5959595959",
-      "123456789"
+      "123456789",
+      "123456"
     ],
     "prequisites": [],
     "history": [
@@ -96,6 +91,7 @@
       "Intro To CS"
     ],
     "history": [
+      "Participate In Course",
       "Participate In Course",
       "Participate In Course"
     ]

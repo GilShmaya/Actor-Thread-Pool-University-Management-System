@@ -36,6 +36,9 @@ public class CheckAdministrativeObligationsAction extends Action<Pair<Boolean, S
             return;
         }
 
+        if(students == null || students.isEmpty() || conditions == null || conditions.isEmpty())
+            complete(new Pair<>(true, "Nothing to check"));
+
         List<Action<Computer>> actionsDependency = new ArrayList<>();
         Action<Computer> acquireComputer = new AcquireComputerAction(departmentName, computerName);
         actionsDependency.add(acquireComputer);

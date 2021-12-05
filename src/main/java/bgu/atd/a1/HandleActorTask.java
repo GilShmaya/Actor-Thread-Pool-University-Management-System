@@ -27,7 +27,6 @@ public class HandleActorTask implements Runnable {
     @Override
     public void run() {
         while (!threads.isShutdown()) {
-            Boolean toAct = false;
             String actorName = null;
             PrivateState actorState = null;
             synchronized (availableActors) {
@@ -36,15 +35,16 @@ public class HandleActorTask implements Runnable {
                         availableActors.wait();
                     }
                     actorName = availableActors.take();
+
                     unavailableActors.add(actorName);
                     actorState = actors.get(actorName);
                 } catch (InterruptedException e) {
                     break;
                 }
             }
-            if(!actionQueue.get(actorName).isEmpty())
+            if(!actionQueue.get(actorName).isEmpty()) {
                 actionQueue.get(actorName).poll().handle(pool, actorName, actorState);
-
+            }
             synchronized (availableActors) {
                 unavailableActors.remove(actorName);
                 if (!actionQueue.get(actorName).isEmpty()) {
